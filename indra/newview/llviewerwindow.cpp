@@ -3917,7 +3917,7 @@ void LLViewerWindow::updateLayout()
 
 void LLViewerWindow::updateMouseDelta()
 {
-#if LL_WINDOWS
+#if LL_WINDOWS || LL_SDL_WINDOW
     LLCoordCommon delta;
     mWindow->getCursorDelta(&delta);
     S32 dx = delta.mX;

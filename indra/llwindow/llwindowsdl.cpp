@@ -845,6 +845,17 @@ bool LLWindowSDL::getCursorPosition(LLCoordWindow *position)
     return convertCoords(screen_pos, position);
 }
 
+bool LLWindowSDL::getCursorDelta(LLCoordCommon* delta)
+{
+    if (!delta) {
+        return false;
+    }
+
+    *delta = mMouseFrameDelta;
+
+    return true;
+}
+
 F32 LLWindowSDL::getNativeAspectRatio()
 {
     if (mOverrideAspectRatio > 0.f)
@@ -1234,6 +1245,12 @@ void LLWindowSDL::gatherInput()
         }
     }
 
+    const auto pixel_scale = SDL_GetWindowPixelDensity(mWindow);
+    mMouseFrameDelta = {llfloor(mMouseDeltaX * pixel_scale), -llfloor(mMouseDeltaY * pixel_scale)};
+
+    mMouseDeltaX = 0.0f;
+    mMouseDeltaY = 0.0f;
+
     updateCursor();
 
     // This is a good time to stop flashing the icon if our mFlashTimer has
@@ -1251,6 +1268,9 @@ SDL_AppResult LLWindowSDL::handleEvent(const SDL_Event& event)
     {
         case SDL_EVENT_MOUSE_MOTION:
         {
+            mMouseDeltaX += event.motion.xrel;
+            mMouseDeltaY += event.motion.yrel;
+
             LLCoordWindow winCoord(llfloor(event.motion.x), llfloor(event.motion.y));
             LLCoordGL openGlCoord;
             convertCoords(winCoord, &openGlCoord);
@@ -1677,7 +1697,7 @@ void LLWindowSDL::hideCursor()
         // LL_INFOS() << "hideCursor: hiding" << LL_ENDL;
         mCursorHidden = true;
         mHideCursorPermanent = true;
-        SDL_HideCursor();
+        SDL_SetWindowRelativeMouseMode(mWindow, true);
     }
     else
     {
@@ -1692,7 +1712,7 @@ void LLWindowSDL::showCursor()
         // LL_INFOS() << "showCursor: showing" << LL_ENDL;
         mCursorHidden = false;
         mHideCursorPermanent = false;
-        SDL_ShowCursor();
+        SDL_SetWindowRelativeMouseMode(mWindow, false);
     }
     else
     {
