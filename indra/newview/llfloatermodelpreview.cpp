@@ -890,28 +890,29 @@ bool LLFloaterModelPreview::handleHover (S32 x, S32 y, MASK mask)
 
     if (mModelPreview && hasMouseCapture())
     {
+        const F32 delta_x = gViewerWindow->getCurrentMouseDX();
+        const F32 delta_y = gViewerWindow->getCurrentMouseDY();
+
         if (local_mask == MASK_PAN)
         {
             // pan here
-            mModelPreview->pan((F32)(x - mLastMouseX) * -0.005f, (F32)(y - mLastMouseY) * -0.005f);
+            mModelPreview->pan(delta_x * -0.005f, delta_y * -0.005f);
         }
         else if (local_mask == MASK_ORBIT)
         {
-            F32 yaw_radians = (F32)(x - mLastMouseX) * -0.01f;
-            F32 pitch_radians = (F32)(y - mLastMouseY) * 0.02f;
+            const auto yaw_radians = delta_x * -0.01f;
+            const auto pitch_radians = delta_y * 0.02f;
 
             mModelPreview->rotate(yaw_radians, pitch_radians);
         }
         else
         {
-
-            F32 yaw_radians = (F32)(x - mLastMouseX) * -0.01f;
-            F32 zoom_amt = (F32)(y - mLastMouseY) * 0.02f;
+            const auto yaw_radians = delta_x * -0.01f;
+            const auto zoom_amt = delta_y * 0.02f;
 
             mModelPreview->rotate(yaw_radians, 0.f);
             mModelPreview->zoom(zoom_amt);
         }
-
 
         mModelPreview->refresh();
 

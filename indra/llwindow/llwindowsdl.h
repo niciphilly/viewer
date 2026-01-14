@@ -81,6 +81,7 @@ public:
     bool setCursorPosition(LLCoordWindow position) override;
 
     bool getCursorPosition(LLCoordWindow *position) override;
+    bool getCursorDelta(LLCoordCommon *delta) override;
     bool isWrapMouse() const override { return true; }
     void showCursor() override;
     void hideCursor() override;
@@ -225,6 +226,9 @@ private:
     LLTimer mFlashTimer;
     U32 mKeyVirtualKey = 0;
     U32 mKeyModifiers = SDL_KMOD_NONE;
+    F32 mMouseDeltaX = 0.0f;
+    F32 mMouseDeltaY = 0.0f;
+    LLCoordCommon mMouseFrameDelta;
 
     LLMutex mOSRMutex;
     std::unordered_map<SDL_GLContext, SDL_Window*> mOSRContexts;

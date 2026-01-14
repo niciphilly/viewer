@@ -558,25 +558,28 @@ bool LLFloaterImagePreview::handleHover(S32 x, S32 y, MASK mask)
 
     if (mAvatarPreview && hasMouseCapture())
     {
+        const F32 delta_x = gViewerWindow->getCurrentMouseDX();
+        const F32 delta_y = gViewerWindow->getCurrentMouseDY();
+
         if (local_mask == MASK_PAN)
         {
             // pan here
             LLCtrlSelectionInterface* iface = childGetSelectionInterface("clothing_type_combo");
             if (iface && iface->getFirstSelectedIndex() <= 0)
             {
-                mPreviewImageRect.translate((F32)(x - mLastMouseX) * -0.005f * mPreviewImageRect.getWidth(),
-                    (F32)(y - mLastMouseY) * -0.005f * mPreviewImageRect.getHeight());
+                mPreviewImageRect.translate(delta_x * -0.005f * mPreviewImageRect.getWidth(),
+                    delta_y * -0.005f * mPreviewImageRect.getHeight());
             }
             else
             {
-                mAvatarPreview->pan((F32)(x - mLastMouseX) * -0.005f, (F32)(y - mLastMouseY) * -0.005f);
-                mSculptedPreview->pan((F32)(x - mLastMouseX) * -0.005f, (F32)(y - mLastMouseY) * -0.005f);
+                mAvatarPreview->pan(delta_x * -0.005f, delta_y * -0.005f);
+                mSculptedPreview->pan(delta_x * -0.005f, delta_y * -0.005f);
             }
         }
         else if (local_mask == MASK_ORBIT)
         {
-            F32 yaw_radians = (F32)(x - mLastMouseX) * -0.01f;
-            F32 pitch_radians = (F32)(y - mLastMouseY) * 0.02f;
+            const auto yaw_radians = delta_x * -0.01f;
+            const auto pitch_radians = delta_y * 0.02f;
 
             mAvatarPreview->rotate(yaw_radians, pitch_radians);
             mSculptedPreview->rotate(yaw_radians, pitch_radians);
@@ -586,13 +589,13 @@ bool LLFloaterImagePreview::handleHover(S32 x, S32 y, MASK mask)
             LLCtrlSelectionInterface* iface = childGetSelectionInterface("clothing_type_combo");
             if (iface && iface->getFirstSelectedIndex() <= 0)
             {
-                F32 zoom_amt = (F32)(y - mLastMouseY) * -0.002f;
+                const F32 zoom_amt = delta_y * -0.002f;
                 mPreviewImageRect.stretch(zoom_amt);
             }
             else
             {
-                F32 yaw_radians = (F32)(x - mLastMouseX) * -0.01f;
-                F32 zoom_amt = (F32)(y - mLastMouseY) * 0.02f;
+                const F32 yaw_radians = delta_x * -0.01f;
+                const F32 zoom_amt = delta_y * 0.02f;
 
                 mAvatarPreview->rotate(yaw_radians, 0.f);
                 mAvatarPreview->zoom(zoom_amt);
